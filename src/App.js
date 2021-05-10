@@ -1,25 +1,55 @@
 import logo from './logo.svg';
 import './App.css';
+// State Management
+import { 
+  RecoilRoot, atom, selector, useRecoilState, useRecoilValue
+} from 'recoil'
+
+// Endpoint Authentication
+import {FirebaseAuthProvider, FirebaseAuthConsumer, IfFirebaseAuthed, IfFirebaseUnAuthed} from "@react-firebase/auth";
+import firebase from "firebase";
+import {firebaseConfig} from "./Helpers/_firebase"
+
+
+// Pages
+import Landing from './pages/Landing'
+import Authentication from './pages/Authentication'
+
+// Navigation
+import {
+  BrowserRouter as Router,
+  Switch,
+  Redirect, 
+  Route, 
+  Link
+} from 'react-router-dom'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RecoilRoot>
+      <FirebaseAuthProvider {...firebaseConfig} firebase={firebase} >
+        <Router>
+          <IfFirebaseUnAuthed>
+                <Switch>
+                  <Route exact path='/'>
+                    <Landing /> 
+                  </Route>
+                  <Route exact path='/auth'>
+                    <Authentication />
+                  </Route>
+                  <Route path="*">
+                    <Redirect to path='/'></Redirect>
+                  </Route>
+                </Switch>
+          </IfFirebaseUnAuthed>
+          
+        </Router>
+      </FirebaseAuthProvider>
+        
+    </RecoilRoot>
   );
 }
+
+
 
 export default App;
